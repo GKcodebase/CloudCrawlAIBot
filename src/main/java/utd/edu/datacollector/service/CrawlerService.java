@@ -11,6 +11,7 @@ import utd.edu.datacollector.model.Data;
 
 import java.io.IOException;
 
+import static utd.edu.datacollector.utility.AwsUtil.generateS3Key;
 import static utd.edu.datacollector.utility.util.dataExtractor;
 
 @Service
@@ -18,6 +19,9 @@ public class CrawlerService {
 
     @Autowired
     CrawlerConfigurationRepository crawlerConfigurationRepository;
+
+    @Autowired
+    private S3Service s3Service;
 
     public CrawlerConfiguration createCrawler(CrawlerConfiguration config) {
         return crawlerConfigurationRepository.save(config);
@@ -29,6 +33,8 @@ public class CrawlerService {
 
         Document doc = Jsoup.connect(config.getUrl()).get();
         Data data  = dataExtractor(doc,config.getUrl());
+        String s3Key = generateS3Key(config);
+        s3Service.uploadToS3(data, s3Key);
         return data;
     }
 }
