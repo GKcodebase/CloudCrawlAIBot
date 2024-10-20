@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utd.edu.datacollector.dao.repository.CrawlerConfigurationRepository;
 import utd.edu.datacollector.model.CrawlerConfiguration;
+import utd.edu.datacollector.model.Data;
 
 import java.io.IOException;
+
+import static utd.edu.datacollector.utility.util.dataExtractor;
 
 @Service
 public class CrawlerService {
@@ -20,12 +23,12 @@ public class CrawlerService {
         return crawlerConfigurationRepository.save(config);
     }
 
-    public String crawl(Long configId) throws IOException {
+    public Data crawl(Long configId) throws IOException {
         CrawlerConfiguration config = crawlerConfigurationRepository.findById(configId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid configuration ID"));
 
         Document doc = Jsoup.connect(config.getUrl()).get();
-        Elements elements = doc.select(config.getTags());
-        return elements.text();
+        Data data  = dataExtractor(doc,config.getUrl());
+        return data;
     }
 }
