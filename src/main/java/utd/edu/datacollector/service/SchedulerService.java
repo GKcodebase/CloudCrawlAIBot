@@ -22,14 +22,19 @@ import static utd.edu.datacollector.Enum.Status.*;
 @Service
 public class SchedulerService {
 
+    private final CrawlServiceInterface crawlerService;
+
+    @Autowired
+    public SchedulerService(CrawlServiceInterface crawlerService) {
+        this.crawlerService = crawlerService;
+    }
+
     @Autowired
     private JobHistoryRepository jobHistoryRepository;
 
     @Autowired
     private CrawlerConfigurationRepository configRepository;
 
-    @Autowired
-    private CrawlerService crawlerService;
 
     @Autowired
     private TaskScheduler taskScheduler;
@@ -69,5 +74,9 @@ public class SchedulerService {
 
         ScheduledFuture<?> scheduledTask = taskScheduler.schedule(task, trigger);
         scheduledTasks.put(config.getId(), scheduledTask);
+    }
+
+    public void addNewConfig(CrawlerConfiguration config){
+        scheduleTask(config);
     }
 }

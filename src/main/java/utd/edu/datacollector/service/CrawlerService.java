@@ -20,7 +20,7 @@ import static utd.edu.datacollector.utility.AwsUtil.generateS3Key;
 import static utd.edu.datacollector.utility.util.dataExtractor;
 
 @Service
-public class CrawlerService {
+public class CrawlerService implements CrawlServiceInterface {
 
     @Autowired
     private CrawlerConfigurationRepository crawlerConfigurationRepository;
@@ -31,15 +31,18 @@ public class CrawlerService {
     @Autowired
     private JobHistoryRepository jobHistoryRepository;
 
+    @Autowired
+    private SchedulerService schedulerService;
+
+    @Override
     public CrawlerConfiguration createCrawler(CrawlerConfiguration config) {
+        schedulerService.addNewConfig(config);
         return crawlerConfigurationRepository.save(config);
     }
-
-    public void crawlAndStoreToS3(Long configId) throws IOException {
+    @Override
+    public void crawlAndStoreToS3(Long configId) {
         CrawlerConfiguration config = crawlerConfigurationRepository.findById(configId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid configuration ID"));
-
-
 
         JobHistory history = new JobHistory();
         history.setConfiguration(config);
@@ -54,7 +57,6 @@ public class CrawlerService {
         } catch (Exception e) {
             history.setStatus(FAILED);
         }
-        // Schedule Task
         jobHistoryRepository.save(history);
     }
 }
