@@ -19,6 +19,5 @@ public class CrawlerConfiguration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
-    private String dataType;
-    private String tags;
+    private String cronExpression;
 }
