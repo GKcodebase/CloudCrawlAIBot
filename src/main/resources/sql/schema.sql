@@ -1,6 +1,7 @@
 /*
     Database and table schema
 */
+DROP DATABASE IF EXISTS crawler;
 CREATE DATABASE IF NOT EXISTS crawler;
 use crawler;
 
@@ -12,18 +13,18 @@ CREATE TABLE crawler_configurations (
     tags VARCHAR(255) NOT NULL
 );
 
---- Table to store crawled data
-CREATE TABLE crawled_data (
+
+-- Table to store Configuration RUN History
+CREATE TABLE job_history (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    crawler_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    end_time DATE,
+    message  VARCHAR(255),
+	start_time DATE,
+    status VARCHAR(20),
+    configuration_id int,
+    FOREIGN KEY (configuration_id) REFERENCES crawled_data(id)
 );
 
--- Table to store job configuration
-CREATE TABLE jobs (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    crawler_id BIGINT NOT NULL,
-    status VARCHAR(255) NOT NULL,
-    result_file_path VARCHAR(255)
-);
+
+SELECT * FROM crawler_configurations;
+SELECT * FROM  job_history;
