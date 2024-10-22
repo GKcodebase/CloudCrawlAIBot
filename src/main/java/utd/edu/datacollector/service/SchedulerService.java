@@ -1,16 +1,12 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.service;
 
-import jakarta.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.stereotype.Service;
-import utd.edu.datacollector.dao.repository.CrawlerConfigurationRepository;
-import utd.edu.datacollector.dao.repository.JobHistoryRepository;
-import utd.edu.datacollector.model.CrawlerConfiguration;
-import utd.edu.datacollector.model.JobHistory;
+import static utd.edu.datacollector.Enum.Status.*;
+import static utd.edu.datacollector.constants.Logging.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -19,8 +15,18 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
 
-import static utd.edu.datacollector.Enum.Status.*;
-import static utd.edu.datacollector.constants.Logging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
+import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
+import utd.edu.datacollector.dao.repository.CrawlerConfigurationRepository;
+import utd.edu.datacollector.dao.repository.JobHistoryRepository;
+import utd.edu.datacollector.model.CrawlerConfiguration;
+import utd.edu.datacollector.model.JobHistory;
 
 /**
  * The Scheduler service.
@@ -36,7 +42,8 @@ public class SchedulerService {
     /**
      * Instantiates a new Scheduler service.
      *
-     * @param crawlerService the crawler service
+     * @param crawlerService
+     *            the crawler service
      */
     @Autowired
     public SchedulerService(CrawlServiceInterface crawlerService) {
@@ -61,13 +68,11 @@ public class SchedulerService {
     @Autowired
     private ErrorHandlingService errorHandlingService;
 
-
     /**
      * The Task scheduler.
      */
     @Autowired
     private TaskScheduler taskScheduler;
-
 
     /**
      * The Scheduled tasks.
@@ -78,10 +83,8 @@ public class SchedulerService {
      */
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
-
     /**
-     * Initialize scheduler.
-     * On Service start, get all existing config and create threads
+     * Initialize scheduler. On Service start, get all existing config and create threads
      */
     @PostConstruct
     public void initializeScheduler() {
@@ -92,11 +95,10 @@ public class SchedulerService {
     }
 
     /**
-     * Schedule task.
-     * Create scheduler Threads based cron expression
-     * Update job history in DB
+     * Schedule task. Create scheduler Threads based cron expression Update job history in DB
      *
-     * @param config the config
+     * @param config
+     *            the config
      */
     public void scheduleTask(CrawlerConfiguration config) {
         Runnable task = () -> {
@@ -108,12 +110,12 @@ public class SchedulerService {
             try {
                 crawlerService.crawlAndStoreToS3(config.getId());
                 audit.setStatus(COMPLETED);
-                logger.info(SCHEDULER_CREATION,config.getId());
+                logger.info(SCHEDULER_CREATION, config.getId());
             } catch (Exception e) {
                 audit.setStatus(FAILED);
                 audit.setMessage(e.getMessage());
-                logger.info(SCHEDULER_CREATION_EXCEPTION,config.getId(),e.getMessage());
-                errorHandlingService.handleError(e,config,audit);
+                logger.info(SCHEDULER_CREATION_EXCEPTION, config.getId(), e.getMessage());
+                errorHandlingService.handleError(e, config, audit);
             } finally {
                 audit.setEndTime(LocalDateTime.now());
                 jobHistoryRepository.save(audit);
@@ -130,20 +132,24 @@ public class SchedulerService {
     /**
      * Add new config.
      *
-     * @param config the config
-     * @throws Exception the exception
+     * @param config
+     *            the config
+     *
+     * @throws Exception
+     *             the exception
      */
-    public void addNewConfig(CrawlerConfiguration config) throws Exception{
+    public void addNewConfig(CrawlerConfiguration config) throws Exception {
         scheduleTask(config);
     }
 
     /**
      * Cancel task.
      *
-     * @param configId the config id
+     * @param configId
+     *            the config id
      */
     public void cancelTask(Long configId) {
-        logger.info(SCHEDULER_DELETION,configId);
+        logger.info(SCHEDULER_DELETION, configId);
         ScheduledFuture<?> scheduledTask = scheduledTasks.get(configId);
         if (scheduledTask != null) {
             scheduledTask.cancel(true);
@@ -154,7 +160,8 @@ public class SchedulerService {
     /**
      * Update task.
      *
-     * @param config the config
+     * @param config
+     *            the config
      */
     public void updateTask(CrawlerConfiguration config) {
         cancelTask(config.getId());

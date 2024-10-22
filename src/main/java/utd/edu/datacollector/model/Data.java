@@ -1,12 +1,17 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.model;
+
+import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Data - bean for crawled data.

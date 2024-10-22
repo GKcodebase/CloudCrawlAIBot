@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.constants;
 
 /**
@@ -12,7 +17,5 @@ public class Logging {
     public static final String SCHEDULER_CREATION_EXCEPTION = "Exception while Creating scheduler job for id : {} : {}";
     public static final String CRAWLER_EXCEPTION = "Crawler error occurred: {} for config: {}";
     public static final String CRAWLER_EXCEPTION_RETRY_FAILURE = "All retry attempts failed for config: {}";
-
-
 
 }

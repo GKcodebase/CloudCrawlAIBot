@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.config;
 
 import org.springframework.context.annotation.Bean;
@@ -11,10 +16,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @Configuration
 public class SchedulerConfig {
     /**
-     * Task scheduler.
-     * Create Threads for running scheduler.
-     * Pool is fixed with 1o thread size
-     * use "crawl-task-" prefix for debugging
+     * Task scheduler. Create Threads for running scheduler. Pool is fixed with 1o thread size use "crawl-task-" prefix
+     * for debugging
      *
      * @return the task scheduler
      */

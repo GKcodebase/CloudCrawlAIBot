@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.exception;
 
-import lombok.Data;
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Map;
+import lombok.Data;
 
 /**
  * The Error config. bean used to define error and retry.

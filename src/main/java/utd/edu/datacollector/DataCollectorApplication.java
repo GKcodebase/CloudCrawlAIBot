@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector;
 
 import org.springframework.boot.SpringApplication;
@@ -13,13 +18,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableRetry
 public class DataCollectorApplication {
 
-	/**
-	 * The entry point of application.
-	 *
-	 * @param args the input arguments
-	 */
-	public static void main(String[] args) {
-		SpringApplication.run(DataCollectorApplication.class, args);
-	}
+    /**
+     * The entry point of application.
+     *
+     * @param args
+     *            the input arguments
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(DataCollectorApplication.class, args);
+    }
 
 }

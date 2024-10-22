@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.model;
+
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,8 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import utd.edu.datacollector.Enum.Status;
-
-import java.time.LocalDateTime;
 
 /**
  * The Job history entity.

@@ -1,37 +1,57 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.utility;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import utd.edu.datacollector.model.Data;
+import static utd.edu.datacollector.constants.CssQuery.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static utd.edu.datacollector.constants.CssQuery.*;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import utd.edu.datacollector.model.Data;
 
 /**
  * The Util. - Utility services for data extraction
  */
 public class DataExtractor {
+
+    /**
+     * Instantiates a new Data extractor.
+     */
+    private DataExtractor() {
+
+    }
+
     /**
      * Data extractor data.
      *
-     * @param doc the doc
-     * @param url the url
+     * @param doc
+     *            the doc
+     * @param url
+     *            the url
+     *
      * @return the data
      */
-    public static Data dataExtractor(Document doc, String url){
-            Data data =  new Data(url,doc.title(),extractText(doc),extractMetadata(doc),extractLinks(doc),extractImages(doc));
-            return data;
+    public static Data dataExtractor(final Document doc, final String url) {
+        Data data = new Data(url, doc.title(), extractText(doc), extractMetadata(doc), extractLinks(doc),
+                extractImages(doc));
+        return data;
     }
 
     /**
      * Extract text string.
      *
-     * @param doc the doc
+     * @param doc
+     *            the doc
+     *
      * @return the string
      */
     private static String extractText(Document doc) {
@@ -41,7 +61,9 @@ public class DataExtractor {
     /**
      * Extract metadata map.
      *
-     * @param doc the doc
+     * @param doc
+     *            the doc
+     *
      * @return the map
      */
     private static Map<String, String> extractMetadata(Document doc) {
@@ -69,7 +91,9 @@ public class DataExtractor {
     /**
      * Extract links list.
      *
-     * @param doc the doc
+     * @param doc
+     *            the doc
+     *
      * @return the list
      */
     private static List<String> extractLinks(Document doc) {
@@ -84,7 +108,9 @@ public class DataExtractor {
     /**
      * Extract images list.
      *
-     * @param doc the doc
+     * @param doc
+     *            the doc
+     *
      * @return the list
      */
     private static List<Map<String, String>> extractImages(Document doc) {

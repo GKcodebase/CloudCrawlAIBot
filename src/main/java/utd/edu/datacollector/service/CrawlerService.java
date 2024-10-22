@@ -1,17 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.service;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import utd.edu.datacollector.dao.repository.CrawlerConfigurationRepository;
-import utd.edu.datacollector.dao.repository.JobHistoryRepository;
-import utd.edu.datacollector.exception.CrawlerException;
-import utd.edu.datacollector.model.CrawlerConfiguration;
-import utd.edu.datacollector.model.JobHistory;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 import static utd.edu.datacollector.Enum.Status.FAILED;
 import static utd.edu.datacollector.Enum.Status.SUCCESS;
@@ -19,6 +11,20 @@ import static utd.edu.datacollector.constants.ErrorConstants.DATA_NOT_FOUND;
 import static utd.edu.datacollector.exception.CrawlerException.Severity.WARNING;
 import static utd.edu.datacollector.utility.AwsUtil.generateS3Key;
 import static utd.edu.datacollector.utility.DataExtractor.dataExtractor;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import utd.edu.datacollector.dao.repository.CrawlerConfigurationRepository;
+import utd.edu.datacollector.dao.repository.JobHistoryRepository;
+import utd.edu.datacollector.exception.CrawlerException;
+import utd.edu.datacollector.model.CrawlerConfiguration;
+import utd.edu.datacollector.model.JobHistory;
 
 /**
  * The Crawler service - service layer for all crawler related task.
@@ -57,16 +63,18 @@ public class CrawlerService implements CrawlServiceInterface {
     private ErrorHandlingService errorHandlingService;
 
     /**
-     * Create crawler configuration.
-     * Add config to scheduler Thread pool.
-     * Add config to DB
-     * Returns modified request with config id
+     * Create crawler configuration. Add config to scheduler Thread pool. Add config to DB Returns modified request with
+     * config id
      *
-     * @param config the config
+     * @param config
+     *            the config
+     *
      * @return the crawler configuration
-     * @throws Exception the exception
+     *
+     * @throws Exception
+     *             the exception
      */
-    //TODO - Handle db commit failure and scheduler additon
+    // TODO - Handle db commit failure and scheduler additon
     @Override
     public CrawlerConfiguration createCrawler(CrawlerConfiguration config) throws Exception {
         schedulerService.addNewConfig(config);
@@ -74,18 +82,18 @@ public class CrawlerService implements CrawlServiceInterface {
     }
 
     /**
-     * Crawl and store to s3.
-     * 1.Crawl the given url
-     * 2.Update job audit
-     * 3.Upload data s3 data lake
+     * Crawl and store to s3. 1.Crawl the given url 2.Update job audit 3.Upload data s3 data lake
      *
-     * @param configId the config id
-     * @throws CrawlerException the crawler exception
+     * @param configId
+     *            the config id
+     *
+     * @throws CrawlerException
+     *             the crawler exception
      */
     @Override
     public void crawlAndStoreToS3(Long configId) throws CrawlerException, IOException {
         CrawlerConfiguration config = crawlerConfigurationRepository.findById(configId)
-                .orElseThrow(() -> new CrawlerException(DATA_NOT_FOUND,configId,WARNING,false));
+                .orElseThrow(() -> new CrawlerException(DATA_NOT_FOUND, configId, WARNING, false));
 
         JobHistory history = new JobHistory();
         history.setConfiguration(config);
@@ -94,11 +102,11 @@ public class CrawlerService implements CrawlServiceInterface {
             // Data Crawler
             Document doc = Jsoup.connect(config.getUrl()).get();
             // DataLake data upload
-            s3Service.uploadToS3(dataExtractor(doc,config.getUrl()), generateS3Key(config));
+            s3Service.uploadToS3(dataExtractor(doc, config.getUrl()), generateS3Key(config));
             history.setStatus(SUCCESS);
         } catch (Exception e) {
             history.setStatus(FAILED);
-            errorHandlingService.handleError(e,config,history);
+            errorHandlingService.handleError(e, config, history);
             throw e;
         }
         jobHistoryRepository.save(history);

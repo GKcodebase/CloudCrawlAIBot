@@ -1,5 +1,9 @@
-package utd.edu.datacollector.constants;
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
 
+package utd.edu.datacollector.constants;
 
 /**
  * The Error constants : Error constants defined in configs.
@@ -13,9 +17,5 @@ public class ErrorConstants {
     public static final String UNKNOWN_ERROR = "UNKNOWN_ERROR";
     public static final String CONTINUE = "CONTINUE";
     public static final String STOP = "STOP";
-
-
-
-
 
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.exception;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CrawlerException extends RuntimeException{
+public class CrawlerException extends RuntimeException {
     /**
      * The Error code.
      */

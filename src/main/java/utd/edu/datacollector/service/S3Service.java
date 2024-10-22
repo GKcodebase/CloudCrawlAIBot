@@ -1,15 +1,21 @@
+/*
+ * Copyright (c) 2024.
+ * Created by Gokul G.K
+ */
+
 package utd.edu.datacollector.service;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 /**
  * The S3 service - s3 based Service
@@ -36,13 +42,17 @@ public class S3Service {
     private ObjectMapper objectMapper;
 
     /**
-     * Upload to s3 string.
-     * Upload data to s3 bucket
+     * Upload to s3 string. Upload data to s3 bucket
      *
-     * @param data the data
-     * @param key  the key
+     * @param data
+     *            the data
+     * @param key
+     *            the key
+     *
      * @return the string
-     * @throws IOException the io exception
+     *
+     * @throws IOException
+     *             the io exception
      */
     public String uploadToS3(Object data, String key) throws IOException {
         byte[] contentAsBytes = objectMapper.writeValueAsBytes(data);
