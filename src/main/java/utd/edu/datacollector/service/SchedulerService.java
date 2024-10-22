@@ -1,6 +1,8 @@
 package utd.edu.datacollector.service;
 
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
@@ -18,6 +20,7 @@ import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
 
 import static utd.edu.datacollector.Enum.Status.*;
+import static utd.edu.datacollector.constants.Logging.*;
 
 @Service
 public class SchedulerService {
@@ -44,6 +47,8 @@ public class SchedulerService {
 
 
     private final Map<Long, ScheduledFuture<?>> scheduledTasks = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
+
 
     @PostConstruct
     public void initializeScheduler() {
@@ -63,9 +68,11 @@ public class SchedulerService {
             try {
                 crawlerService.crawlAndStoreToS3(config.getId());
                 audit.setStatus(COMPLETED);
+                logger.info(SCHEDULER_CREATION,config.getId());
             } catch (Exception e) {
                 audit.setStatus(FAILED);
                 audit.setMessage(e.getMessage());
+                logger.info(SCHEDULER_CREATION_EXCEPTION,config.getId(),e.getMessage());
                 errorHandlingService.handleError(e,config,audit);
                 throw e;
             } finally {
@@ -86,6 +93,7 @@ public class SchedulerService {
     }
 
     public void cancelTask(Long configId) {
+        logger.info(SCHEDULER_DELETION,configId);
         ScheduledFuture<?> scheduledTask = scheduledTasks.get(configId);
         if (scheduledTask != null) {
             scheduledTask.cancel(true);

@@ -1,5 +1,7 @@
 package utd.edu.datacollector.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -15,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static utd.edu.datacollector.Enum.Status.FAILED;
 import static utd.edu.datacollector.constants.ErrorConstants.*;
+import static utd.edu.datacollector.constants.Logging.CRAWLER_EXCEPTION;
+import static utd.edu.datacollector.constants.Logging.CRAWLER_EXCEPTION_RETRY_FAILURE;
 
 @Service
 public class ErrorHandlingService {
@@ -25,6 +29,8 @@ public class ErrorHandlingService {
     private SchedulerService schedulerService;
 
     private final Map<String, RetryTemplate> retryTemplates = new ConcurrentHashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(ErrorHandlingService.class);
+
 
     public void handleError(Exception e, CrawlerConfiguration config, JobHistory audit) {
         String errorCode = determineErrorCode(e);
@@ -34,6 +40,7 @@ public class ErrorHandlingService {
             handleUnknownError(e, config, audit);
             return;
         }
+        logger.error(CRAWLER_EXCEPTION, errorCode, config.getId());
         audit.setStatus(FAILED);
         audit.setMessage(errorDef.getMessage() + ": " + e.getMessage());
 
@@ -86,6 +93,7 @@ public class ErrorHandlingService {
                 return null;
             });
         } catch (Exception retryException) {
+            logger.error(CRAWLER_EXCEPTION_RETRY_FAILURE, config.getId(), retryException);
             handleNonRetryableError(errorDef, config, retryException);
         }
     }
