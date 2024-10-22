@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utd.edu.datacollector.model.CrawlerConfiguration;
 import utd.edu.datacollector.service.CrawlServiceInterface;
-import utd.edu.datacollector.service.CrawlerService;
 
 @RestController
 @RequestMapping("/api/v1/crawlers")

@@ -35,6 +35,9 @@ public class SchedulerService {
     @Autowired
     private CrawlerConfigurationRepository configRepository;
 
+    @Autowired
+    private ErrorHandlingService errorHandlingService;
+
 
     @Autowired
     private TaskScheduler taskScheduler;
@@ -63,6 +66,8 @@ public class SchedulerService {
             } catch (Exception e) {
                 audit.setStatus(FAILED);
                 audit.setMessage(e.getMessage());
+                errorHandlingService.handleError(e,config,audit);
+                throw e;
             } finally {
                 audit.setEndTime(LocalDateTime.now());
                 jobHistoryRepository.save(audit);
@@ -76,7 +81,20 @@ public class SchedulerService {
         scheduledTasks.put(config.getId(), scheduledTask);
     }
 
-    public void addNewConfig(CrawlerConfiguration config){
+    public void addNewConfig(CrawlerConfiguration config) throws Exception{
+        scheduleTask(config);
+    }
+
+    public void cancelTask(Long configId) {
+        ScheduledFuture<?> scheduledTask = scheduledTasks.get(configId);
+        if (scheduledTask != null) {
+            scheduledTask.cancel(true);
+            scheduledTasks.remove(configId);
+        }
+    }
+
+    public void updateTask(CrawlerConfiguration config) {
+        cancelTask(config.getId());
         scheduleTask(config);
     }
 }
