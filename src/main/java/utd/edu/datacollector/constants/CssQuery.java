@@ -1,5 +1,8 @@
 package utd.edu.datacollector.constants;
 
+/**
+ * The Css query - Constants for formatting crawled data.
+ */
 public class CssQuery {
     public static final String  META ="meta";
     public static final String  NAME ="name";

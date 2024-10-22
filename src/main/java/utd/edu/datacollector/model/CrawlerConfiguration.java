@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+/**
+ * The Crawler configuration entity.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,9 +18,18 @@ import lombok.Setter;
 @Table(name = "crawler_configurations")
 public class CrawlerConfiguration {
 
+    /**
+     * The Id.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    /**
+     * The Url.
+     */
     private String url;
+    /**
+     * The Cron expression.
+     */
     private String cronExpression;
 }

@@ -10,20 +10,42 @@ import utd.edu.datacollector.service.CrawlServiceInterface;
 
 import static utd.edu.datacollector.constants.Logging.*;
 
+/**
+ * The Crawler controller - controller class.
+ */
 @RestController
 @RequestMapping("/api/v1/crawlers")
 
 public class CrawlerController {
 
+    /**
+     * The logger.
+     */
     private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
+    /**
+     * The Crawler service.
+     */
     private final CrawlServiceInterface crawlerService;
 
+    /**
+     * Instantiates a new Crawler controller.
+     *
+     * @param crawlerService the crawler service
+     */
     @Autowired
     public CrawlerController(CrawlServiceInterface crawlerService) {
         this.crawlerService = crawlerService;
     }
 
+    /**
+     * Create crawler configuration response entity.
+     * Request :: CrawlerConfiguration
+     * Response :: 200 OK -> Success
+     *             500 Internal Server Exception
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<?> createCrawlerConfiguration(@RequestBody CrawlerConfiguration request){
         logger.info(CRAWLER_REQUEST);

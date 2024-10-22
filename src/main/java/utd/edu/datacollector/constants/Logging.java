@@ -1,5 +1,8 @@
 package utd.edu.datacollector.constants;
 
+/**
+ * The Logging - Logging messages used in application.
+ */
 public class Logging {
     public static final String CRAWLER_REQUEST = "Crawler configuring request received";
     public static final String CRAWLER_ERROR = "Exception while creating crawler config for id {} :: {}";

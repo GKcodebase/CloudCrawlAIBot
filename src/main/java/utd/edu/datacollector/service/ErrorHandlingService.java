@@ -20,18 +20,42 @@ import static utd.edu.datacollector.constants.ErrorConstants.*;
 import static utd.edu.datacollector.constants.Logging.CRAWLER_EXCEPTION;
 import static utd.edu.datacollector.constants.Logging.CRAWLER_EXCEPTION_RETRY_FAILURE;
 
+/**
+ * The Error handling service - handle all exception.
+ */
 @Service
 public class ErrorHandlingService {
+    /**
+     * The Error config.
+     */
     @Autowired
     private ErrorConfig errorConfig;
 
+    /**
+     * The Scheduler service.
+     */
     @Autowired
     private SchedulerService schedulerService;
 
+    /**
+     * The Retry templates.
+     */
     private final Map<String, RetryTemplate> retryTemplates = new ConcurrentHashMap<>();
+    /**
+     * The constant logger.
+     */
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandlingService.class);
 
 
+    /**
+     * Handle error.
+     *
+     * Handle exception - check and retry task based on error.
+     *
+     * @param e      the e
+     * @param config the config
+     * @param audit  the audit
+     */
     public void handleError(Exception e, CrawlerConfiguration config, JobHistory audit) {
         String errorCode = determineErrorCode(e);
         ErrorConfig.ErrorDefinition errorDef = errorConfig.getDefinitions().get(errorCode);
@@ -51,12 +75,19 @@ public class ErrorHandlingService {
         }
 
     }
+
+    /**
+     * Determine error code string.
+     *
+     * @param e the e
+     * @return the string
+     */
     private String determineErrorCode(Exception e) {
         if (e instanceof CrawlerException) {
             return ((CrawlerException) e).getErrorCode();
         }
 
-        // Map common exceptions to error codes
+        // Map common exceptions to error codes, mentioned in configs
         if (e instanceof java.net.ConnectException) {
             return CONNECTION_ERROR;
         } else if (e instanceof java.net.SocketTimeoutException) {
@@ -70,11 +101,27 @@ public class ErrorHandlingService {
 
         return UNKNOWN_ERROR;
     }
+
+    /**
+     * Handle unknown error.
+     * Unknown error will log and ignore.
+     * Update job status to FAILED
+     * @param e      the e
+     * @param config the config
+     * @param audit  the audit
+     */
     private void handleUnknownError(Exception e, CrawlerConfiguration config, JobHistory audit) {
         audit.setStatus(FAILED);
         audit.setMessage("An unexpected error occurred: " + e.getMessage());
     }
 
+    /**
+     * Should retry boolean.
+     * check retry based on config
+     * @param errorCode the error code
+     * @param config    the config
+     * @return the boolean
+     */
     private boolean shouldRetry(String errorCode, CrawlerConfiguration config) {
         ErrorConfig.ErrorDefinition errorDef = errorConfig.getDefinitions().get(errorCode);
         return errorDef != null &&
@@ -82,6 +129,14 @@ public class ErrorHandlingService {
                 errorDef.getMaxRetries() > 0;
     }
 
+    /**
+     * Handle retryable error.
+     * Recreate task for retry able error.
+     *
+     * @param errorDef the error def
+     * @param config   the config
+     * @param e        the e
+     */
     private void handleRetryableError(ErrorConfig.ErrorDefinition errorDef,
                                       CrawlerConfiguration config,
                                       Exception e) {
@@ -98,6 +153,12 @@ public class ErrorHandlingService {
         }
     }
 
+    /**
+     * Gets or create retry template.
+     *
+     * @param errorDef the error def
+     * @return the or create retry template
+     */
     private RetryTemplate getOrCreateRetryTemplate(ErrorConfig.ErrorDefinition errorDef) {
         return retryTemplates.computeIfAbsent(errorDef.getMessage(), k -> {
             SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(errorDef.getMaxRetries());
@@ -114,6 +175,13 @@ public class ErrorHandlingService {
         });
     }
 
+    /**
+     * Handle non retryable error.
+     * Stop crawler for non retry errors
+     * @param errorDef the error def
+     * @param config   the config
+     * @param e        the e
+     */
     private void handleNonRetryableError(ErrorConfig.ErrorDefinition errorDef,
                                          CrawlerConfiguration config,
                                          Exception e) {
@@ -128,6 +196,11 @@ public class ErrorHandlingService {
         }
     }
 
+    /**
+     * Stop crawler.
+     * stopping crawler for unknown errors.
+     * @param config the config
+     */
     private void stopCrawler(CrawlerConfiguration config) {
         schedulerService.cancelTask(config.getId());
     }

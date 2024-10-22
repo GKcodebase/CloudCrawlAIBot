@@ -1,7 +1,9 @@
 package utd.edu.datacollector.constants;
 
-import utd.edu.datacollector.exception.CrawlerException;
 
+/**
+ * The Error constants : Error constants defined in configs.
+ */
 public class ErrorConstants {
     public static final String CONNECTION_ERROR = "CONNECTION_ERROR";
     public static final String TIMEOUT_ERROR = "TIMEOUT_ERROR";

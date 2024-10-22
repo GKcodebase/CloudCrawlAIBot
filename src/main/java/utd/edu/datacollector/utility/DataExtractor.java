@@ -12,16 +12,38 @@ import java.util.Map;
 
 import static utd.edu.datacollector.constants.CssQuery.*;
 
-public class util {
+/**
+ * The Util. - Utility services for data extraction
+ */
+public class DataExtractor {
+    /**
+     * Data extractor data.
+     *
+     * @param doc the doc
+     * @param url the url
+     * @return the data
+     */
     public static Data dataExtractor(Document doc, String url){
             Data data =  new Data(url,doc.title(),extractText(doc),extractMetadata(doc),extractLinks(doc),extractImages(doc));
             return data;
     }
 
+    /**
+     * Extract text string.
+     *
+     * @param doc the doc
+     * @return the string
+     */
     private static String extractText(Document doc) {
         return doc.body().text();
     }
 
+    /**
+     * Extract metadata map.
+     *
+     * @param doc the doc
+     * @return the map
+     */
     private static Map<String, String> extractMetadata(Document doc) {
         Map<String, String> metadata = new HashMap<>();
 
@@ -44,6 +66,12 @@ public class util {
         return metadata;
     }
 
+    /**
+     * Extract links list.
+     *
+     * @param doc the doc
+     * @return the list
+     */
     private static List<String> extractLinks(Document doc) {
         List<String> links = new ArrayList<>();
         Elements linkElements = doc.select(HREF_ATR_KEY);
@@ -53,6 +81,12 @@ public class util {
         return links;
     }
 
+    /**
+     * Extract images list.
+     *
+     * @param doc the doc
+     * @return the list
+     */
     private static List<Map<String, String>> extractImages(Document doc) {
         List<Map<String, String>> images = new ArrayList<>();
         Elements imageElements = doc.select(IMAGE);
