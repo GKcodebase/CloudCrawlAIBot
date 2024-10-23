@@ -11,6 +11,8 @@ package utd.edu.datacollector.constants;
 public class Logging {
     public static final String CRAWLER_REQUEST = "Crawler configuring request received";
     public static final String CRAWLER_ERROR = "Exception while creating crawler config for id {} :: {}";
+    public static final String INVALID_REQUEST = "Invalid request received";
+
     public static final String CRAWLER_REQUEST_COMPLETION = "Crawler request completed : {}";
     public static final String SCHEDULER_CREATION = "Created scheduler job for id : {}";
     public static final String SCHEDULER_DELETION = "Created scheduler job for id : {}";

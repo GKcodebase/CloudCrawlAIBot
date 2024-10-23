@@ -7,6 +7,7 @@ package utd.edu.datacollector.controller.v1;
 
 import static utd.edu.datacollector.constants.Logging.*;
 
+import org.jsoup.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,8 @@ public class CrawlerController {
     @PostMapping
     public ResponseEntity<?> createCrawlerConfiguration(@RequestBody CrawlerConfiguration request) {
         logger.info(CRAWLER_REQUEST);
+        if(!checkRequestValidity(request))
+            return ResponseEntity.badRequest().body(INVALID_REQUEST);
         CrawlerConfiguration createdConfig = new CrawlerConfiguration();
         try {
             createdConfig = crawlerService.createCrawler(request);
@@ -66,6 +69,21 @@ public class CrawlerController {
         }
         logger.info(CRAWLER_REQUEST_COMPLETION, createdConfig.getId());
         return ResponseEntity.ok(createdConfig);
+    }
+
+    /**
+     * Check request validity
+     * Returns boolean.
+     *
+     * @param request the request
+     * @return the boolean
+     */
+    private boolean checkRequestValidity(CrawlerConfiguration request) {
+        if(null == request || StringUtil.isBlank(request.getUrl()) || StringUtil.isBlank(request.getCronExpression())){
+            logger.error(CRAWLER_ERROR, request.getId(),INVALID_REQUEST );
+            return false;
+        }
+        return true;
     }
 
 }
